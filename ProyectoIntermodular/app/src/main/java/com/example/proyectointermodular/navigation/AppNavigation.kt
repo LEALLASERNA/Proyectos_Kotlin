@@ -10,7 +10,7 @@ import com.example.proyectointermodular.screens.Login
 import com.example.proyectointermodular.screens.ProveedorAlta
 import com.example.proyectointermodular.screens.ProveedoresEliminar
 import com.example.proyectointermodular.screens.ProveedoresListar
-import com.example.proyectointermodular.screens.ProveedoresListar2
+
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -24,7 +24,7 @@ fun AppNavigation (auth: FirebaseAuth) {
         composable(AppScreens.ProveedorAlta.ruta) { ProveedorAlta(navigationController, auth, viewModel()) }
         composable(AppScreens.ProveedoresEliminar.ruta) { ProveedoresEliminar(navigationController, auth, viewModel()) }
         composable(AppScreens.ProveedoresListar.ruta) { ProveedoresListar(navigationController, auth, viewModel()) }
-        composable(AppScreens.ProveedoresListar2.ruta) { ProveedoresListar2(navigationController, auth, viewModel()) }
+
     }
 }
 
