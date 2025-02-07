@@ -32,7 +32,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 
-fun ProveedorAlta(navController: NavHostController,auth: FirebaseAuth, ViewModel: ProveedorViewModel) {
+fun ProveedorAlta(navController: NavHostController,
+                  auth: FirebaseAuth,
+                  ViewModel: ProveedorViewModel) {
+
     val db = FirebaseFirestore.getInstance()
 
     var nombre_coleccion = "proveedores"
