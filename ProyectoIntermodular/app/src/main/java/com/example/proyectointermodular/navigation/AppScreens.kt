@@ -8,5 +8,6 @@ sealed class AppScreens (val ruta:String) {
      object ProveedorAlta: AppScreens("ProveedorAlta")
      object ProveedoresEliminar: AppScreens("ProveedoresEliminar")
      object ProveedoresListar: AppScreens("ProveedoresListar")
-     object ProveedoresListar2: AppScreens("ProveedoresListar2")
+     object ProveedoresEditar: AppScreens("ProveedoresEditar")
+
 }

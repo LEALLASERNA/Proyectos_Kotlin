@@ -40,7 +40,7 @@ class ProveedorViewModel : ViewModel() {
     private fun enableButton(nif: String, nombre: String): Boolean =
         nif.isNotBlank() && nombre.isNotBlank()
 
-    // ✅ Agregar proveedor a Firebase
+    //Agregar proveedor a Firebase
     fun addProveedor() {
         val nifValue = _nif.value ?: return
         val nombreValue = _nombre.value ?: return
@@ -78,6 +78,21 @@ class ProveedorViewModel : ViewModel() {
                 _proveedores.value = snapshot.toObjects(Proveedor::class.java)
             } catch (e: Exception) {
                 _proveedores.value = emptyList()
+            }
+        }
+    }
+
+    fun updateProveedor(nif: String, nuevoNombre: String) {
+        viewModelScope.launch {
+            try {
+                db.collection("proveedores").document(nif)
+                    .update("nombre", nuevoNombre)
+                    .await()
+
+                _mensajeConfirmacion.value = "Proveedor actualizado correctamente"
+                loadProveedores() // Actualizar lista después de editar
+            } catch (e: Exception) {
+                _mensajeConfirmacion.value = "Error al actualizar el proveedor"
             }
         }
     }

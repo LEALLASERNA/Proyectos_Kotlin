@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.proyectointermodular.screens.Home
 import com.example.proyectointermodular.screens.Login
 import com.example.proyectointermodular.screens.ProveedorAlta
+import com.example.proyectointermodular.screens.ProveedoresEditar
 import com.example.proyectointermodular.screens.ProveedoresEliminar
 import com.example.proyectointermodular.screens.ProveedoresListar
 
@@ -24,7 +25,10 @@ fun AppNavigation (auth: FirebaseAuth) {
         composable(AppScreens.ProveedorAlta.ruta) { ProveedorAlta(navigationController, auth, viewModel()) }
         composable(AppScreens.ProveedoresEliminar.ruta) { ProveedoresEliminar(navigationController, auth, viewModel()) }
         composable(AppScreens.ProveedoresListar.ruta) { ProveedoresListar(navigationController, auth, viewModel()) }
-
+        composable(AppScreens.ProveedoresEditar.ruta + "/{nif}") { backStackEntry ->
+            val nif = backStackEntry.arguments?.getString("nif") ?: ""
+            ProveedoresEditar(navigationController, auth, viewModel(), nif)
+        }
     }
 }
 

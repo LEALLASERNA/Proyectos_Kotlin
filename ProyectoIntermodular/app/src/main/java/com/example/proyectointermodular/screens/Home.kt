@@ -15,9 +15,11 @@ import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
-fun Home (navController: NavHostController, auth: FirebaseAuth, ViewModel: ProveedorViewModel) {
-
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+fun Home(navController: NavHostController, auth: FirebaseAuth, viewModel: ProveedorViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "Menú de la App", fontSize = 24.sp)
 
@@ -27,7 +29,7 @@ fun Home (navController: NavHostController, auth: FirebaseAuth, ViewModel: Prove
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        Button(onClick = { navController.navigate("ProveedoresELiminar") }) {
+        Button(onClick = { navController.navigate("ProveedoresEliminar") }) {
             Text(text = "Eliminar Proveedor")
         }
 
@@ -38,5 +40,4 @@ fun Home (navController: NavHostController, auth: FirebaseAuth, ViewModel: Prove
 
         Spacer(modifier = Modifier.weight(1f))
     }
-
 }

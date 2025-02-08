@@ -1,121 +1,147 @@
 package com.example.proyectointermodular.screens
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.example.proyectointermodular.models.Proveedor
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.proyectointermodular.ViewModel.ProveedorViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import com.example.proyectointermodular.models.Proveedor
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
-fun ProveedoresListar(navController: NavHostController, auth: FirebaseAuth, ViewModel: ProveedorViewModel) {
+fun ProveedoresListar(navController: NavHostController, auth: FirebaseAuth, viewModel: ProveedorViewModel) {
+    val listaProveedores by viewModel.proveedores.collectAsState()
 
-     var listaProveedores by remember { mutableStateOf(emptyList<Proveedor>()) }
+    LaunchedEffect(Unit) {
+        viewModel.loadProveedores()
+    }
 
-    //incluimos la vista
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(top= 60.dp)
+            .padding(16.dp)
     ) {
-        Text(text = "Listado de Proveedores", fontWeight = FontWeight.Bold)
-
-        //Realizar una operacion asincrona
-        DisposableEffect(true) {
-            val job = CoroutineScope(Dispatchers.IO).launch {
-                val proveedores = getProveedores()
-
-                listaProveedores = proveedores
-            }
-            onDispose {
-                job.cancel()
-            }
-        }
-
-        //LazyColumn para mostar la lista de proveedores
+        Text(text = "Listado de Proveedores", fontSize = MaterialTheme.typography.headlineSmall.fontSize)
+        Spacer(modifier = Modifier.height(10.dp))
 
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier = Modifier.fillMaxSize()
         ) {
             items(listaProveedores) { proveedor ->
-                ProveedorItem(proveedor)
+                ProveedorEditarItem(proveedor, viewModel)
             }
         }
-
-    }
-
-
-
-
-}
-
-//Funcion suspendida para obtener la lista de proveedores dentro de un try cath
-suspend fun getProveedores(): List<Proveedor> {
-    return try {
-        // Obtener instancia de Firebase Firestore
-        val db = FirebaseFirestore.getInstance()
-
-        //Almacenar el nombre de la colección
-        var nombre_coleccion = "proveedores"
-
-        val querySnapshot = db.collection(nombre_coleccion).get().await()
-
-        val proveedores = mutableListOf<Proveedor>()
-
-        for (document in querySnapshot.documents) {
-            val proveedor = document.toObject(Proveedor::class.java)
-            if (proveedor != null) {
-                proveedores.add(proveedor)
-            }
-        }
-        querySnapshot.toObjects(Proveedor::class.java)
-
-    } catch (e: Exception) {
-        emptyList()
     }
 }
 
-//Funcion para mostrar un item de la lista de proveedores
 @Composable
-fun ProveedorItem(proveedor: Proveedor) {
+fun ProveedorEditarItem(proveedor: Proveedor, viewModel: ProveedorViewModel) {
+    var editando by remember { mutableStateOf(false) }
+    var nuevoNombre by remember { mutableStateOf(proveedor.nombre) }
+    var mensajeConfirmacion by remember { mutableStateOf("") }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .shadow(4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(16.dp)
         ) {
             Text(text = "NIF: ${proveedor.nif}")
-            Text(text = "Nombre: ${proveedor.nombre}")
+
+            if (editando) {
+                // Campo de texto editable
+                OutlinedTextField(
+                    value = nuevoNombre,
+                    onValueChange = { nuevoNombre = it },
+                    label = { Text("Nuevo nombre") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row {
+                    Button(
+                        onClick = {
+                            viewModel.updateProveedor(proveedor.nif, nuevoNombre)
+                            mensajeConfirmacion = "Proveedor actualizado correctamente"
+                            editando = false
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                    ) {
+                        Text(text = "Guardar", color = Color.White)
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Button(
+                        onClick = { editando = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                    ) {
+                        Text(text = "Cancelar", color = Color.White)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = mensajeConfirmacion)
+            } else {
+                // Muestra el nombre actual y los botones de acción
+                Text(text = "Nombre: ${proveedor.nombre}")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(
+                        onClick = { editando = true },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+                    ) {
+                        Text(text = "Editar", color = Color.Black)
+                    }
+
+                    Button(
+                        onClick = { viewModel.deleteProveedor(proveedor.nif) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                    ) {
+                        Text(text = "Eliminar", color = Color.White)
+                    }
+                }
+            }
         }
     }
 }
