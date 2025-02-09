@@ -1,4 +1,3 @@
-package com.example.proyectointermodular.screens
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,26 +14,28 @@ import androidx.navigation.NavHostController
 import com.example.proyectointermodular.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
 
-
 @Composable
-fun Home(navController: NavHostController, auth: FirebaseAuth) {
+fun HomeUser(navController: NavHostController, auth: FirebaseAuth) {
+    val user = auth.currentUser
+    val uid = user?.uid ?: return
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = "Panel de Administrador", fontSize = 24.sp)
+        Text(text = "Bienvenido Usuario", fontSize = 24.sp)
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(onClick = { navController.navigate(AppScreens.ProveedorAlta.ruta) }) {
+        Button(onClick = { navController.navigate("AgregarProveedor") }) {
             Text(text = "Agregar Proveedor")
         }
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Button(onClick = { navController.navigate(AppScreens.ProveedoresListar.ruta) }) {
-            Text(text = "Listar Proveedores")
+        Button(onClick = { navController.navigate("MisProveedores") }) {
+            Text(text = "Ver Mis Proveedores")
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -42,10 +43,12 @@ fun Home(navController: NavHostController, auth: FirebaseAuth) {
         Button(onClick = {
             auth.signOut()
             navController.navigate(AppScreens.Login.ruta) {
-                popUpTo(AppScreens.Home.ruta) { inclusive = true }
+                popUpTo(AppScreens.HomeUser.ruta) { inclusive = true }
             }
         }) {
             Text(text = "Cerrar Sesión")
         }
     }
 }
+
+

@@ -1,7 +1,5 @@
 package com.example.proyectointermodular.screens
 
-import android.util.Log
-import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,11 +8,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,67 +23,68 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.proyectointermodular.R
 import com.example.proyectointermodular.navigation.AppScreens
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
 fun Login(navController: NavHostController, auth: FirebaseAuth) {
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val db = FirebaseFirestore.getInstance()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Imagen de fondo
         Image(
             painter = painterResource(id = R.drawable.fondo_login2),
             contentDescription = null,
-            contentScale = ContentScale.Crop,// Ajusta la imagen sin deformarla
+            contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )
 
-        // Contenedor principal
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)) // Opacidad para mejor visibilidad del texto
-                .padding(horizontal = 32.dp),
+                .background(Color.Black.copy(alpha = 0.5f))
+                .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Text(text = "Iniciar Sesión", color = Color.White, fontSize = 28.sp)
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(20.dp))
 
-            Text(text = "Email", color = White, fontSize = 24.sp)
-            TextField(
+            OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                modifier = Modifier.padding(vertical = 8.dp)
+                label = { Text("Email") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(10.dp))
 
-            Text(text = "Contraseña", color = White, fontSize = 24.sp)
-            TextField(
+            OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                modifier = Modifier.padding(vertical = 8.dp)
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(20.dp))
 
-            // Botón de Login
             Button(
                 onClick = {
                     if (email.isEmpty() || password.isEmpty()) {
@@ -94,23 +95,37 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                     auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                navController.navigate(AppScreens. Home.ruta)
-                                Log.i("Jc", "Inicio de sesión correcto")
+                                val user = auth.currentUser
+                                user?.let {
+                                    db.collection("usuarios").document(user.uid)
+                                        .get()
+                                        .addOnSuccessListener { document ->
+                                            val rol = document.getString("rol") ?: "usuario"
+                                            if (rol == "admin") {
+                                                navController.navigate(AppScreens.Home.ruta) {
+                                                    popUpTo(AppScreens.Login.ruta) { inclusive = true }
+                                                }
+                                            } else {
+                                                navController.navigate(AppScreens.HomeUser.ruta) {
+                                                    popUpTo(AppScreens.Login.ruta) { inclusive = true }
+                                                }
+                                            }
+                                        }
+                                }
                             } else {
                                 val errorMsg = task.exception?.message ?: "Error desconocido"
-                                Toast.makeText(context, "Inicio de sesión fallido: $errorMsg", Toast.LENGTH_SHORT).show()
-                                Log.e("Jc", errorMsg)
+                                Toast.makeText(context, "Error: $errorMsg", Toast.LENGTH_SHORT).show()
                             }
                         }
                 },
-                modifier = Modifier.align(Alignment.CenterHorizontally) // Centrar botón
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Login")
+                Text(text = "Iniciar Sesión")
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(10.dp))
 
-            // Botón para registrar un nuevo usuario
+            //Modificar el registro para asignar un rol
             Button(
                 onClick = {
                     if (email.isEmpty() || password.isEmpty()) {
@@ -121,16 +136,32 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                Toast.makeText(context, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show()
-                                Log.i("Auth", "Usuario creado con éxito")
+                                val user = auth.currentUser
+                                user?.let {
+                                    val userData = hashMapOf(
+                                        "email" to email,
+                                        "rol" to "usuario" // Todos los nuevos usuarios son "usuario" por defecto
+                                    )
+
+                                    db.collection("usuarios").document(user.uid)
+                                        .set(userData)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(context, "Usuario registrado correctamente", Toast.LENGTH_SHORT).show()
+                                            navController.navigate(AppScreens.HomeUser.ruta) {
+                                                popUpTo(AppScreens.Login.ruta) { inclusive = true }
+                                            }
+                                        }
+                                        .addOnFailureListener {
+                                            Toast.makeText(context, "Error al guardar usuario", Toast.LENGTH_SHORT).show()
+                                        }
+                                }
                             } else {
                                 val errorMsg = task.exception?.message ?: "Error desconocido"
-                                Toast.makeText(context, "Error al registrar: $errorMsg", Toast.LENGTH_SHORT).show()
-                                Log.e("Auth", errorMsg)
+                                Toast.makeText(context, "Error: $errorMsg", Toast.LENGTH_SHORT).show()
                             }
-                        }
+                           }
                 },
-                modifier = Modifier.align(Alignment.CenterHorizontally) // Centrar botón
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Registrarse")
             }

@@ -57,7 +57,7 @@ class ProveedorViewModel : ViewModel() {
         }
     }
 
-    // ✅ Eliminar proveedor por NIF
+    //Eliminar proveedor por NIF
     fun deleteProveedor(nif: String) {
         viewModelScope.launch {
             try {
@@ -70,7 +70,7 @@ class ProveedorViewModel : ViewModel() {
         }
     }
 
-    // ✅ Obtener proveedores desde Firebase Firestore
+    //Obtener proveedores desde Firebase Firestore
     fun loadProveedores() {
         viewModelScope.launch {
             try {
@@ -81,7 +81,7 @@ class ProveedorViewModel : ViewModel() {
             }
         }
     }
-
+    //Actualizar proveedor por NIF
     fun updateProveedor(nif: String, nuevoNombre: String) {
         viewModelScope.launch {
             try {
