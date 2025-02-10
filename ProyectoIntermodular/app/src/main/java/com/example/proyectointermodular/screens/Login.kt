@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -29,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.proyectointermodular.R
 import com.example.proyectointermodular.navigation.AppScreens
@@ -48,26 +49,30 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
         Image(
             painter = painterResource(id = R.drawable.fondo_login2),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .size(400.dp)
+                .align(Alignment.Center)
+                .offset(y = (-200).dp)
         )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-                .padding(32.dp),
+                .background(Color.White.copy(alpha = 0f))
+                .padding(32.dp)
+                .offset(y = 100.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Iniciar Sesión", color = Color.White, fontSize = 28.sp)
+            //Text(text = "Iniciar Sesión", color = Color.White, fontSize = 28.sp)
 
             Spacer(Modifier.height(20.dp))
 
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
+                label = { Text("Email", color = Color.Black) }, // Color del label
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -77,9 +82,10 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Contraseña") },
+                label = { Text("Contraseña", color = Color.Black) },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -119,6 +125,7 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                         }
                 },
                 modifier = Modifier.fillMaxWidth()
+
             ) {
                 Text(text = "Iniciar Sesión")
             }
@@ -161,7 +168,9 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                             }
                            }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.
+                    fillMaxWidth()
+
             ) {
                 Text(text = "Registrarse")
             }

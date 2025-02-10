@@ -26,6 +26,7 @@ firebaseFireStoreKtx = "25.1.1"
 
 #LiveData
 liveData = "2.3.1"
+benchmarkMacro = "1.3.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +64,7 @@ androidx-viewModel-compose = { group = "androidx.lifecycle", name = "viewmodel-c
 #LiveData
 androidx-liveData = { group = "androidx.lifecycle", name = "livedata-ktx", version.ref = "liveData" }
 lifecycle-runtime-ktx = { module = "androix.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro", version.ref = "benchmarkMacro" }
 
 
 [plugins]
