@@ -57,6 +57,7 @@ dependencies {
 
     //Firebase
     implementation(platform(libs.firebase.bom))
+    implementation ("io.coil-kt:coil-compose:2.2.2")
 
     //Firebase Auth
     implementation(libs.firebase.auth)
@@ -69,6 +70,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.benchmark.macro)
+    implementation(libs.firebase.storage.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

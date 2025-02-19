@@ -4,16 +4,13 @@ sealed class AppScreens(val ruta: String) {
      // Login
      object Login : AppScreens("Login")
 
-     // Pantallas del Administrador
+     // Admin (Lista Global de Cartas)
      object Home : AppScreens("Home")
-     object ProveedorAlta : AppScreens("ProveedorAlta")
-     object ProveedoresEliminar : AppScreens("ProveedoresEliminar")
-     object ProveedoresListar : AppScreens("ProveedoresListar")
-     object ProveedoresEditar : AppScreens("ProveedoresEditar")
-     object AdminUsuarios : AppScreens("AdminUsuarios")
+     object CartaAlta : AppScreens("CartaAlta")
+     object CartasListar : AppScreens("CartasListar")
 
-     // Pantallas del Usuario
+     // Usuario (Lista Personal)
      object HomeUser : AppScreens("HomeUser")
-     object AgregarProveedor : AppScreens("AgregarProveedor")
-     object MisProveedores : AppScreens("MisProveedores")
+     object AgregarCarta : AppScreens("AgregarCarta")
+     object MisCartas : AppScreens("MisCartas")
 }

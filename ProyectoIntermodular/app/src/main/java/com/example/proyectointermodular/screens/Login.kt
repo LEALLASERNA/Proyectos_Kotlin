@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.proyectointermodular.R
 import com.example.proyectointermodular.navigation.AppScreens
@@ -65,7 +66,7 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            //Text(text = "Iniciar Sesión", color = Color.White, fontSize = 28.sp)
+            Text(text = "Iniciar Sesión", color = Color.White, fontSize = 28.sp)
 
             Spacer(Modifier.height(20.dp))
 
