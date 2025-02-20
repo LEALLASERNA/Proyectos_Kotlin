@@ -28,7 +28,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-
 fun CartaAlta(navController: NavHostController,
                   auth: FirebaseAuth,
                   ViewModel: CartaViewModel) {

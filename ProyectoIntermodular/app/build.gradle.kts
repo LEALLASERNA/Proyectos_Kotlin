@@ -67,11 +67,12 @@ dependencies {
     implementation ("androidx.compose.runtime:runtime-livedata:1.3.2")
 
     //ViewModel
+    implementation ("androidx.compose.material:material:1.4.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.benchmark.macro)
     implementation(libs.firebase.storage.ktx)
-
+    implementation ("androidx.compose.material3:material3:1.3.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
